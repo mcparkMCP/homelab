@@ -1,0 +1,259 @@
+# ~/.bashrc: executed by bash(1) for non-login shells.
+# Homelab dotfiles configuration
+
+# If not running interactively, don't do anything
+case $- in
+    *i*) ;;
+      *) return;;
+esac
+
+#=============================================================================
+# History Configuration
+#=============================================================================
+
+# Don't put duplicate lines or lines starting with space in the history
+HISTCONTROL=ignoreboth
+
+# Append to the history file, don't overwrite it
+shopt -s histappend
+
+# History size
+HISTSIZE=10000
+HISTFILESIZE=20000
+
+# Add timestamp to history
+HISTTIMEFORMAT="%F %T "
+
+#=============================================================================
+# Shell Options
+#=============================================================================
+
+# Check the window size after each command
+shopt -s checkwinsize
+
+# Enable "**" pattern in pathname expansion
+shopt -s globstar 2>/dev/null
+
+# Case-insensitive globbing
+shopt -s nocaseglob
+
+# Autocorrect typos in path names when using `cd`
+shopt -s cdspell
+
+#=============================================================================
+# Environment Variables
+#=============================================================================
+
+# Default editor
+export EDITOR="nano"
+export VISUAL="nano"
+
+# Colored GCC warnings and errors
+export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+
+# Less configuration
+export LESS='-R --mouse --wheel-lines=3'
+export LESSHISTFILE="$HOME/.local/share/lesshst"
+
+#=============================================================================
+# Path Configuration
+#=============================================================================
+
+# Add ~/bin to PATH if not already there
+if [[ ":$PATH:" != *":$HOME/bin:"* ]]; then
+    export PATH="$HOME/bin:$PATH"
+fi
+
+# Add ~/.local/bin to PATH
+if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
+    export PATH="$HOME/.local/bin:$PATH"
+fi
+
+# Cargo/Rust
+[[ -f "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
+
+#=============================================================================
+# Prompt Configuration
+#=============================================================================
+
+# Set variable identifying the chroot you work in
+if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
+    debian_chroot=$(cat /etc/debian_chroot)
+fi
+
+# Detect color support
+case "$TERM" in
+    xterm-color|*-256color) color_prompt=yes;;
+esac
+
+if [ "$color_prompt" = yes ]; then
+    # Colorful prompt with git branch support
+    parse_git_branch() {
+        git branch 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
+    }
+    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[33m\]$(parse_git_branch)\[\033[00m\]\$ '
+else
+    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+fi
+unset color_prompt
+
+# Set terminal title
+case "$TERM" in
+xterm*|rxvt*)
+    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
+    ;;
+esac
+
+#=============================================================================
+# Color Support
+#=============================================================================
+
+if [ -x /usr/bin/dircolors ]; then
+    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+    alias ls='ls --color=auto'
+    alias grep='grep --color=auto'
+    alias fgrep='fgrep --color=auto'
+    alias egrep='egrep --color=auto'
+    alias diff='diff --color=auto'
+    alias ip='ip -color=auto'
+fi
+
+#=============================================================================
+# Aliases
+#=============================================================================
+
+# Load aliases from separate file
+if [ -f ~/.bash_aliases ]; then
+    . ~/.bash_aliases
+fi
+
+# Quick aliases
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+
+# Safety aliases
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+
+# Disk usage
+alias df='df -h'
+alias du='du -h'
+alias free='free -h'
+
+# Process management
+alias psg='ps aux | grep -v grep | grep -i'
+alias ports='netstat -tulanp'
+
+# Network aliases
+alias myip='curl -s ifconfig.me && echo'
+alias localip='hostname -I | awk "{print \$1}"'
+
+#=============================================================================
+# Bash Completion
+#=============================================================================
+
+if ! shopt -oq posix; then
+    if [ -f /usr/share/bash-completion/bash_completion ]; then
+        . /usr/share/bash-completion/bash_completion
+    elif [ -f /etc/bash_completion ]; then
+        . /etc/bash_completion
+    fi
+fi
+
+#=============================================================================
+# Homelab Network Tools
+#=============================================================================
+
+# Quick network scan alias
+alias scan='network-scan'
+alias scanv='network-scan -v'
+alias scana='network-scan -a'
+alias scanf='network-scan -f'
+alias scanlive='network-scan --live'
+
+# Router tools
+alias voorouter='voo-router-sync'
+alias routerdevices='voo-router-sync --active'
+
+#=============================================================================
+# SSH Welcome Banner
+#=============================================================================
+
+if [[ -n "$SSH_CONNECTION" ]]; then
+    echo ""
+    echo -e "\033[1;36m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
+    echo -e "\033[1m🖥️  Welcome back! Network Status (cached)\033[0m"
+    ~/bin/network-scan 2>/dev/null || echo "Network scan unavailable"
+    echo -e "\033[1;36m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
+    echo -e "Type '\033[1;33mscan -v\033[0m' for details, '\033[1;33mscan --live\033[0m' for fresh scan"
+    echo ""
+fi
+
+#=============================================================================
+# Useful Functions
+#=============================================================================
+
+# Create directory and cd into it
+mkcd() {
+    mkdir -p "$1" && cd "$1"
+}
+
+# Extract various archive formats
+extract() {
+    if [ -f "$1" ]; then
+        case "$1" in
+            *.tar.bz2)   tar xjf "$1"     ;;
+            *.tar.gz)    tar xzf "$1"     ;;
+            *.tar.xz)    tar xJf "$1"     ;;
+            *.bz2)       bunzip2 "$1"     ;;
+            *.rar)       unrar x "$1"     ;;
+            *.gz)        gunzip "$1"      ;;
+            *.tar)       tar xf "$1"      ;;
+            *.tbz2)      tar xjf "$1"     ;;
+            *.tgz)       tar xzf "$1"     ;;
+            *.zip)       unzip "$1"       ;;
+            *.Z)         uncompress "$1"  ;;
+            *.7z)        7z x "$1"        ;;
+            *)           echo "'$1' cannot be extracted via extract()" ;;
+        esac
+    else
+        echo "'$1' is not a valid file"
+    fi
+}
+
+# Quick HTTP server
+serve() {
+    local port="${1:-8000}"
+    python3 -m http.server "$port"
+}
+
+# Find process by name
+findproc() {
+    ps aux | grep -v grep | grep -i "$1"
+}
+
+# Show top 10 largest files/directories
+top10() {
+    du -ah "${1:-.}" 2>/dev/null | sort -rh | head -10
+}
+
+# Weather
+weather() {
+    curl -s "wttr.in/${1:-}"
+}
+
+# Quick notes
+note() {
+    local notes_file="$HOME/.notes"
+    if [ $# -eq 0 ]; then
+        cat "$notes_file" 2>/dev/null || echo "No notes yet."
+    else
+        echo "$(date '+%Y-%m-%d %H:%M'): $*" >> "$notes_file"
+        echo "Note added."
+    fi
+}

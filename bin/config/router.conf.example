@@ -1,0 +1,28 @@
+# VOO Router Configuration
+# Copy this file to router.conf and fill in your credentials
+#
+# IMPORTANT: Never commit router.conf to git!
+# The .gitignore file excludes it by default.
+
+[router]
+# Router web interface URL
+url = http://192.168.0.1
+
+# Router login credentials
+# Find these on your router's sticker or in your ISP documentation
+username = your_username
+password = your_password
+
+[network]
+# Your local network CIDR
+# Common values: 192.168.0.0/24, 192.168.1.0/24, 10.0.0.0/24
+network = 192.168.0.0/24
+
+# Network interface name
+# Find with: ip link show
+# Common values: eth0, enp2s0, enp3s0, ens33
+interface = eth0
+
+# Your machine's IP address on the network
+# Find with: hostname -I | awk '{print $1}'
+my_ip = 192.168.0.100

@@ -1,0 +1,128 @@
+# G3 AI Assistant Configuration
+# Copy this file to ~/.config/g3/config.toml and fill in your API keys
+#
+# IMPORTANT: Never commit config.toml with real API keys to git!
+
+[providers]
+# Default provider used when no specific provider is specified
+# Options: "anthropic.default", "openai.default", "azure.default", "databricks.default"
+default_provider = "anthropic.default"
+
+# Optional: Specify different providers for each mode
+# planner = "anthropic.planner"   # Provider for planning mode
+# coach = "anthropic.default"     # Provider for coach (code reviewer)
+# player = "anthropic.default"    # Provider for player (code implementer)
+
+#=============================================================================
+# Anthropic Configuration
+#=============================================================================
+
+[providers.anthropic.default]
+api_key = "your-anthropic-api-key"  # Get from: https://console.anthropic.com/
+model = "claude-sonnet-4-5"
+max_tokens = 64000
+temperature = 0.3
+# cache_config = "ephemeral"      # Optional: Enable prompt caching
+# enable_1m_context = true         # Optional: Enable 1M context window
+# thinking_budget_tokens = 10000   # Optional: Enable extended thinking
+
+# Example: A separate config for planning with a more capable model
+# [providers.anthropic.planner]
+# api_key = "your-anthropic-api-key"
+# model = "claude-opus-4-5"
+# max_tokens = 64000
+# thinking_budget_tokens = 16000
+
+#=============================================================================
+# OpenAI Configuration
+#=============================================================================
+
+# [providers.openai.default]
+# api_key = "your-openai-api-key"  # Get from: https://platform.openai.com/
+# model = "gpt-4-turbo"
+# max_tokens = 4096
+# temperature = 0.1
+
+#=============================================================================
+# Azure OpenAI Configuration
+#=============================================================================
+
+# [providers.azure.default]
+# endpoint = "https://your-resource.openai.azure.com/"
+# api_key = "your-azure-api-key"
+# deployment = "your-deployment-name"
+# api_version = "2024-10-01-preview"
+# max_tokens = 64000
+# temperature = 0.3
+
+#=============================================================================
+# Databricks Configuration
+#=============================================================================
+
+# [providers.databricks.default]
+# host = "https://your-workspace.cloud.databricks.com"
+# token = "your-databricks-token"  # Optional - will use OAuth if not provided
+# model = "databricks-claude-sonnet-4"
+# max_tokens = 4096
+# temperature = 0.1
+# use_oauth = true
+
+#=============================================================================
+# OpenAI-Compatible Providers (OpenRouter, Groq, etc.)
+#=============================================================================
+
+# [providers.openai_compatible.openrouter]
+# api_key = "your-openrouter-api-key"
+# model = "anthropic/claude-3.5-sonnet"
+# base_url = "https://openrouter.ai/api/v1"
+# max_tokens = 4096
+# temperature = 0.1
+
+# [providers.openai_compatible.groq]
+# api_key = "your-groq-api-key"
+# model = "llama-3.3-70b-versatile"
+# base_url = "https://api.groq.com/openai/v1"
+# max_tokens = 4096
+# temperature = 0.1
+
+#=============================================================================
+# Agent Settings
+#=============================================================================
+
+[agent]
+fallback_default_max_tokens = 8192
+# max_context_length: Override the context window size for all providers
+max_context_length = 200000
+enable_streaming = true
+timeout_seconds = 60
+max_retry_attempts = 3
+autonomous_max_retry_attempts = 6
+allow_multiple_tool_calls = true
+auto_compact = true
+
+#=============================================================================
+# Computer Control (Optional)
+#=============================================================================
+
+[computer_control]
+enabled = false  # Set to true to enable (requires OS permissions)
+require_confirmation = true
+max_actions_per_second = 5
+
+#=============================================================================
+# WebDriver (Optional)
+#=============================================================================
+
+[webdriver]
+enabled = false
+safari_port = 4444
+chrome_port = 9515
+# Browser: "safari" or "chrome-headless" (default)
+browser = "chrome-headless"
+
+#=============================================================================
+# MacAX Accessibility (Optional, macOS only)
+#=============================================================================
+
+[macax]
+enabled = false

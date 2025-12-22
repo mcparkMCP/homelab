@@ -1,8 +1,8 @@
-# Homelab Tools (Part1)
+# Homelab
 
 A collection of tools for monitoring and managing my home network.
 
-## 📱 Phone Presence Monitor
+## Phone Presence Monitor
 
 Monitors device presence on the network using the VOO router API and sends Telegram notifications.
 
@@ -21,11 +21,11 @@ Monitors device presence on the network using the VOO router API and sends Teleg
 
 **Location:** `phone-presence-monitor/`
 
-## 🔍 MOTD Tools
+## MOTD Tools
 
 Network scanning and router management tools for SSH login and command-line use.
 
-### router (NEW)
+### router
 **Local CLI for router management** - works offline!
 ```bash
 router devices          # List devices from router
@@ -50,43 +50,26 @@ dns-traffic capture     # Live capture
 dns-traffic analyze     # Analyze saved capture
 ```
 
-### voo-router-api / voo-router-sync
-Low-level router API tools for device discovery and name syncing.
-
 **Location:** `motd-tools/`
 
-## 🖥️ SSH Login MOTD
+## Cybersecurity Training Lab
 
-When you SSH in, you'll see:
-```
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🖥️  Welcome back! Network Status (cached)
-🌐 Network: 10 devices (all known)
-📱 Redmi Note 12 Pro 5G: PRESENT/ABSENT
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Quick Commands: (work offline - no internet needed)
-  scan -v|-a|--live     Network scan
-  router devices        List devices from router
-  router kick <name>    Block device
-  router allow <name>   Unblock device
-  router block <site>   Block website
-  router banned         Show blocked
-  router --help         Full help
-  dns-traffic           DNS analyzer
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-```
+Three intentionally vulnerable applications for learning security testing:
 
-## Installation
+| App | URL | Focus |
+|-----|-----|-------|
+| **DVWA** | http://localhost:8081 | Classic web vulnerabilities (SQLi, XSS, etc.) |
+| **Juice Shop** | http://localhost:8082 | Modern web app security (100+ challenges) |
+| **crAPI** | http://localhost:8083 | API security (OWASP API Top 10) |
 
-See individual README files in each directory for setup instructions.
+## Dotfiles
 
-## Systemd Services
-
-Included service files:
-- `phone-monitor.service` - Phone presence monitor with Telegram bot
-- `network-scan.service` + `network-scan.timer` - Periodic network scanning
+Managed with chezmoi. Includes zsh config, git config, aliases, tool-versions, and mac settings.
 
 ## Router Compatibility
 
 Tested with **VOO Technicolor routers** using PBKDF2 authentication.
-May work with other Technicolor routers with similar APIs.
+
+## License
+
+MIT
