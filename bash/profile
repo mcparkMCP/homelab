@@ -1,0 +1,67 @@
+# ~/.profile: executed by the command interpreter for login shells.
+# Homelab dotfiles
+
+# This file is not read by bash(1), if ~/.bash_profile or ~/.bash_login exists.
+
+#=============================================================================
+# Environment Variables
+#=============================================================================
+
+# Default editor
+export EDITOR="nano"
+export VISUAL="nano"
+
+# XDG Base Directory Specification
+export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_DATA_HOME="$HOME/.local/share"
+export XDG_CACHE_HOME="$HOME/.cache"
+export XDG_STATE_HOME="$HOME/.local/state"
+
+# Less configuration
+export LESS='-R --mouse --wheel-lines=3'
+export LESSHISTFILE="$XDG_DATA_HOME/lesshst"
+
+# History file location
+export HISTFILE="$HOME/.bash_history"
+
+#=============================================================================
+# Path Configuration
+#=============================================================================
+
+# Set PATH so it includes user's private bin if it exists
+if [ -d "$HOME/bin" ]; then
+    PATH="$HOME/bin:$PATH"
+fi
+
+# Set PATH so it includes user's private bin if it exists
+if [ -d "$HOME/.local/bin" ]; then
+    PATH="$HOME/.local/bin:$PATH"
+fi
+
+# Cargo/Rust
+if [ -f "$HOME/.cargo/env" ]; then
+    . "$HOME/.cargo/env"
+fi
+
+# Go
+if [ -d "/usr/local/go/bin" ]; then
+    PATH="/usr/local/go/bin:$PATH"
+fi
+if [ -d "$HOME/go/bin" ]; then
+    PATH="$HOME/go/bin:$PATH"
+fi
+
+# Node.js (nvm)
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+#=============================================================================
+# Source bashrc for interactive shells
+#=============================================================================
+
+# If running bash, include .bashrc if it exists
+if [ -n "$BASH_VERSION" ]; then
+    if [ -f "$HOME/.bashrc" ]; then
+        . "$HOME/.bashrc"
+    fi
+fi

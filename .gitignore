@@ -1,0 +1,43 @@
+# Sensitive configuration files - NEVER commit these!
+
+# Router credentials
+bin/config/router.conf
+
+# G3 AI assistant config (contains API keys)
+config/g3/config.toml
+
+# SSH keys
+.ssh/
+
+# Local data directories
+.local/
+.cache/
+
+# Scan data (contains network info)
+*.db
+scan_cache.json
+
+# Log files
+*.log
+logs/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Editor files
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Backup files
+*.bak
+*.backup
+*.orig

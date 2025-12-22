@@ -1,0 +1,259 @@
+# Cybersecurity Training Lab - Docker Compose
+#
+# This file sets up three vulnerable web applications for security training:
+# - DVWA (Damn Vulnerable Web Application)
+# - OWASP Juice Shop
+# - crAPI (Completely Ridiculous API)
+#
+# Usage:
+#   cd ~/dotfiles/docker/cybersecurity
+#   docker compose up -d
+#
+# Access:
+#   DVWA:       http://localhost:8081
+#   Juice Shop: http://localhost:8082
+#   crAPI:      http://localhost:8083
+#
+# ⚠️  WARNING: These applications are intentionally vulnerable!
+# Only run them in isolated environments. Never expose to the internet.
+#
+
+services:
+  #===========================================================================
+  # DVWA - Damn Vulnerable Web Application
+  #===========================================================================
+  # Classic PHP/MySQL vulnerable web app for learning web security
+  # Default login: admin / password
+  # https://github.com/digininja/DVWA
+  #
+  dvwa:
+    image: vulnerables/web-dvwa:latest
+    container_name: dvwa
+    ports:
+      - "8081:80"
+    environment:
+      - MYSQL_HOSTNAME=dvwa-db
+      - MYSQL_DATABASE=dvwa
+      - MYSQL_USERNAME=dvwa
+      - MYSQL_PASSWORD=p@ssw0rd
+    depends_on:
+      - dvwa-db
+    restart: unless-stopped
+    networks:
+      - cybersec-lab
+
+  dvwa-db:
+    image: mariadb:10.6
+    container_name: dvwa-db
+    environment:
+      - MYSQL_ROOT_PASSWORD=dvwa_root_pass
+      - MYSQL_DATABASE=dvwa
+      - MYSQL_USER=dvwa
+      - MYSQL_PASSWORD=p@ssw0rd
+    volumes:
+      - dvwa-db-data:/var/lib/mysql
+    restart: unless-stopped
+    networks:
+      - cybersec-lab
+
+  #===========================================================================
+  # OWASP Juice Shop
+  #===========================================================================
+  # Modern vulnerable web app with 100+ challenges
+  # Covers OWASP Top 10 and more
+  # https://github.com/juice-shop/juice-shop
+  #
+  juice-shop:
+    image: bkimminich/juice-shop:latest
+    container_name: juice-shop
+    ports:
+      - "8082:3000"
+    environment:
+      - NODE_ENV=ctf
+    restart: unless-stopped
+    networks:
+      - cybersec-lab
+
+  #===========================================================================
+  # crAPI - Completely Ridiculous API
+  #===========================================================================
+  # Vulnerable API for learning API security testing
+  # Covers OWASP API Security Top 10
+  # https://github.com/OWASP/crAPI
+  #
+  # Note: crAPI has many services. This is a simplified setup.
+  # For full setup, use the official crAPI docker-compose.
+  #
+  crapi-web:
+    image: crapi/crapi-web:latest
+    container_name: crapi-web
+    ports:
+      - "8083:80"
+    environment:
+      - COMMUNITY_SERVICE=crapi-community:8087
+      - IDENTITY_SERVICE=crapi-identity:8080
+      - WORKSHOP_SERVICE=crapi-workshop:8000
+    depends_on:
+      - crapi-identity
+      - crapi-community
+      - crapi-workshop
+    restart: unless-stopped
+    networks:
+      - cybersec-lab
+
+  crapi-identity:
+    image: crapi/crapi-identity:latest
+    container_name: crapi-identity
+    environment:
+      - LOG_LEVEL=INFO
+      - DB_NAME=crapi
+      - DB_USER=admin
+      - DB_PASSWORD=crapisecretpassword
+      - DB_HOST=crapi-postgres
+      - DB_PORT=5432
+      - SERVER_PORT=8080
+      - ENABLE_SHELL_INJECTION=false
+      - JWT_SECRET=crapi-jwt-secret-key
+      - MAILHOG_HOST=crapi-mailhog
+      - MAILHOG_PORT=1025
+      - MAILHOG_DOMAIN=example.com
+      - SMTP_HOST=smtp.example.com
+      - SMTP_PORT=587
+      - SMTP_EMAIL=user@example.com
+      - SMTP_PASS=xxxxxxxxxxxxxx
+      - SMTP_FROM=no-reply@example.com
+      - SMTP_AUTH=true
+      - SMTP_STARTTLS=true
+      - JWT_EXPIRATION=604800000
+      - ENABLE_LOG4J=false
+      - API_GATEWAY_URL=https://api.mypremiumdealership.com
+      - TLS_ENABLED=false
+    volumes:
+      - crapi-keys:/app/keys
+    depends_on:
+      - crapi-postgres
+      - crapi-mongodb
+      - crapi-mailhog
+    restart: unless-stopped
+    networks:
+      - cybersec-lab
+
+  crapi-community:
+    image: crapi/crapi-community:latest
+    container_name: crapi-community
+    environment:
+      - LOG_LEVEL=INFO
+      - IDENTITY_SERVICE=crapi-identity:8080
+      - DB_NAME=crapi
+      - DB_USER=admin
+      - DB_PASSWORD=crapisecretpassword
+      - DB_HOST=crapi-postgres
+      - DB_PORT=5432
+      - SERVER_PORT=8087
+      - MONGO_DB_HOST=crapi-mongodb
+      - MONGO_DB_PORT=27017
+      - MONGO_DB_USER=admin
+      - MONGO_DB_PASSWORD=crapisecretpassword
+      - MONGO_DB_NAME=crapi
+      - TLS_ENABLED=false
+    depends_on:
+      - crapi-postgres
+      - crapi-mongodb
+      - crapi-identity
+    restart: unless-stopped
+    networks:
+      - cybersec-lab
+
+  crapi-workshop:
+    image: crapi/crapi-workshop:latest
+    container_name: crapi-workshop
+    environment:
+      - LOG_LEVEL=INFO
+      - IDENTITY_SERVICE=crapi-identity:8080
+      - DB_NAME=crapi
+      - DB_USER=admin
+      - DB_PASSWORD=crapisecretpassword
+      - DB_HOST=crapi-postgres
+      - DB_PORT=5432
+      - SERVER_PORT=8000
+      - MONGO_DB_HOST=crapi-mongodb
+      - MONGO_DB_PORT=27017
+      - MONGO_DB_USER=admin
+      - MONGO_DB_PASSWORD=crapisecretpassword
+      - MONGO_DB_NAME=crapi
+      - SECRET_KEY=crapi-secret-key
+      - TLS_ENABLED=false
+    depends_on:
+      - crapi-postgres
+      - crapi-mongodb
+      - crapi-identity
+    restart: unless-stopped
+    networks:
+      - cybersec-lab
+
+  crapi-postgres:
+    image: postgres:14-alpine
+    container_name: crapi-postgres
+    environment:
+      - POSTGRES_DB=crapi
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=crapisecretpassword
+    volumes:
+      - crapi-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d crapi"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - cybersec-lab
+
+  crapi-mongodb:
+    image: mongo:5.0
+    container_name: crapi-mongodb
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=crapisecretpassword
+      - MONGO_INITDB_DATABASE=crapi
+    volumes:
+      - crapi-mongodb-data:/data/db
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - cybersec-lab
+
+  crapi-mailhog:
+    image: mailhog/mailhog:latest
+    container_name: crapi-mailhog
+    ports:
+      - "8025:8025"  # Web UI for viewing emails
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8025"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - cybersec-lab
+
+#=============================================================================
+# Networks
+#=============================================================================
+networks:
+  cybersec-lab:
+    driver: bridge
+    name: cybersec-lab
+
+#=============================================================================
+# Volumes
+#=============================================================================
+volumes:
+  dvwa-db-data:
+  crapi-postgres-data:
+  crapi-mongodb-data:
+  crapi-keys:

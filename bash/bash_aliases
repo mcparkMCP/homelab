@@ -1,0 +1,217 @@
+# ~/.bash_aliases - Custom command aliases
+# Homelab dotfiles
+
+#=============================================================================
+# Navigation
+#=============================================================================
+
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+alias ~='cd ~'
+alias -- -='cd -'
+
+#=============================================================================
+# Listing
+#=============================================================================
+
+alias ls='ls --color=auto'
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
+alias lh='ls -lh'                    # Human readable sizes
+alias lt='ls -ltr'                   # Sort by time, oldest first
+alias lS='ls -lSr'                   # Sort by size, smallest first
+alias tree='tree -C'                 # Colorized tree
+alias tree2='tree -L 2'              # Tree depth 2
+alias tree3='tree -L 3'              # Tree depth 3
+
+#=============================================================================
+# File Operations (Safety)
+#=============================================================================
+
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+alias ln='ln -i'
+alias mkdir='mkdir -pv'
+
+#=============================================================================
+# Grep & Search
+#=============================================================================
+
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+alias rg='rg --smart-case'           # ripgrep with smart case
+
+#=============================================================================
+# Disk & Memory
+#=============================================================================
+
+alias df='df -h'
+alias du='du -h'
+alias du1='du -h --max-depth=1'
+alias ducks='du -cksh * | sort -rh | head -10'  # Top 10 space hogs
+alias free='free -h'
+alias usage='df -h --total | tail -1'
+
+#=============================================================================
+# Process Management
+#=============================================================================
+
+alias ps='ps auxf'
+alias psg='ps aux | grep -v grep | grep -i'
+alias psmem='ps auxf | sort -nr -k 4 | head -10'  # Top memory processes
+alias pscpu='ps auxf | sort -nr -k 3 | head -10'  # Top CPU processes
+alias top='htop 2>/dev/null || top'
+alias kill9='kill -9'
+
+#=============================================================================
+# Network
+#=============================================================================
+
+alias ports='netstat -tulanp'
+alias listening='netstat -tlnp'
+alias connections='netstat -an | grep ESTABLISHED'
+alias myip='curl -s ifconfig.me && echo'
+alias localip='hostname -I | awk "{print \$1}"'
+alias ping='ping -c 5'
+alias fastping='ping -c 100 -s 1'
+alias wget='wget -c'                 # Resume downloads
+alias header='curl -I'               # Get HTTP headers
+alias headerc='curl -I --compress'   # Get compressed headers
+
+# Homelab network tools
+alias scan='network-scan'
+alias scanv='network-scan -v'
+alias scana='network-scan -a'
+alias scanf='network-scan -f'
+alias scanlive='network-scan --live'
+alias scanlist='network-scan --list'
+alias scanlog='network-scan --log'
+
+# Router tools
+alias voorouter='voo-router-sync'
+alias routerdevices='voo-router-sync --active'
+alias routerjson='voo-router-sync --json'
+alias routerupdate='voo-router-sync --update'
+
+# Cybersecurity lab
+alias seclab='~/bin/seclab'
+alias labstart='seclab start'
+alias labstop='seclab stop'
+alias labstatus='seclab status'
+alias dvwa='echo "DVWA: http://localhost:8081 (admin/password)"'
+alias juiceshop='echo "Juice Shop: http://localhost:8082"'
+alias crapi='echo "crAPI: http://localhost:8083"'
+
+#=============================================================================
+# System
+#=============================================================================
+
+alias reboot='sudo reboot'
+alias shutdown='sudo shutdown -h now'
+alias update='sudo apt update && sudo apt upgrade -y'
+alias install='sudo apt install'
+alias remove='sudo apt remove'
+alias search='apt search'
+alias sysinfo='uname -a'
+alias meminfo='cat /proc/meminfo'
+alias cpuinfo='lscpu'
+
+# Systemd
+alias sc='sudo systemctl'
+alias scs='sudo systemctl status'
+alias scr='sudo systemctl restart'
+alias sce='sudo systemctl enable'
+alias scd='sudo systemctl disable'
+alias jctl='journalctl -xe'
+alias jctlf='journalctl -f'
+
+#=============================================================================
+# Docker (if installed)
+#=============================================================================
+
+alias d='docker'
+alias dc='docker compose'
+alias dps='docker ps'
+alias dpsa='docker ps -a'
+alias di='docker images'
+alias dex='docker exec -it'
+alias dlogs='docker logs -f'
+alias dprune='docker system prune -af'
+alias dstop='docker stop $(docker ps -q)'
+
+#=============================================================================
+# Git
+#=============================================================================
+
+alias g='git'
+alias gs='git status'
+alias ga='git add'
+alias gaa='git add --all'
+alias gc='git commit -m'
+alias gca='git commit -am'
+alias gp='git push'
+alias gpl='git pull'
+alias gf='git fetch'
+alias gb='git branch'
+alias gco='git checkout'
+alias gd='git diff'
+alias gds='git diff --staged'
+alias gl='git log --oneline -10'
+alias glog='git log --graph --oneline --decorate'
+alias gundo='git reset HEAD~1 --soft'
+
+#=============================================================================
+# Python
+#=============================================================================
+
+alias py='python3'
+alias pip='pip3'
+alias venv='python3 -m venv'
+alias activate='source venv/bin/activate'
+alias serve='python3 -m http.server'
+
+#=============================================================================
+# Misc Utilities
+#=============================================================================
+
+alias c='clear'
+alias h='history'
+alias j='jobs -l'
+alias path='echo -e ${PATH//:/\\n}'
+alias now='date +"%Y-%m-%d %H:%M:%S"'
+alias week='date +%V'
+alias timer='echo "Timer started. Stop with Ctrl-D." && date && time cat && date'
+alias weather='curl wttr.in'
+alias moon='curl wttr.in/Moon'
+alias cheat='curl cheat.sh/'
+alias qr='curl qrenco.de/'
+
+# Clipboard (if xclip installed)
+alias pbcopy='xclip -selection clipboard'
+alias pbpaste='xclip -selection clipboard -o'
+
+# Quick edit configs
+alias bashrc='${EDITOR:-nano} ~/.bashrc && source ~/.bashrc'
+alias aliases='${EDITOR:-nano} ~/.bash_aliases && source ~/.bash_aliases'
+alias hosts='sudo ${EDITOR:-nano} /etc/hosts'
+
+#=============================================================================
+# Safety & Confirmation
+#=============================================================================
+
+alias chown='chown --preserve-root'
+alias chmod='chmod --preserve-root'
+alias chgrp='chgrp --preserve-root'
+
+#=============================================================================
+# Fun
+#=============================================================================
+
+alias matrix='cmatrix 2>/dev/null || echo "Install cmatrix: sudo apt install cmatrix"'
+alias starwars='telnet towel.blinkenlights.nl'
+alias parrot='curl parrot.live'
