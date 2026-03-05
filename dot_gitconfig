@@ -1,0 +1,24 @@
+[user]
+	name = Glenn Vlekke
+	email = glenn.vlekke@divotion.com
+[core]
+	excludesfile = /Users/gvlekke/.gitignore_global
+[difftool "sourcetree"]
+	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
+	path = 
+[mergetool "sourcetree"]
+	cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
+	trustExitCode = true
+[commit]
+	template = /Users/gvlekke/.stCommitMsg
+
+[includeIf "gitdir:~/projects/rws/"]
+	path = ~/projects/rws/.gitconfig
+[gitbutler]
+	aiModelProvider = ollama
+[pull]
+	rebase = true
+[rebase]
+	autoStash = true
+[push]
+	autoSetupRemote = true
