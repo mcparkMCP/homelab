@@ -1,0 +1,22 @@
+packages:
+  darwin:
+    brews:
+    - 'git'
+    - 'asdf'
+    - 'wakeonlan'
+    casks:
+    - 'google-chrome'
+    - 'slack'
+    - 'microsoft-teams'
+    - 'signal'
+    - 'spotify'
+    - 'visual-studio-code'
+    - 'cyberduck'
+    - 'imageoptim'
+    - 'sourcetree'
+    - 'vlc'
+    - 'youtube-to-mp3'
+    - 'licecap'
+    - 'ollama'
+    - 'adobe-creative-cloud'
+    - 'warp'
